@@ -20,12 +20,24 @@ export class AppController {
   @Header('Content-Disposition', 'inline; filename=certificate.pdf')
   async generateCertificate(
     @Res() res: Response,
-    @Query('name') name: string = 'John Doe',
+    @Query('name') name: string = '',
     @Query('additionalText') additionalText: string = '',
   ) {
     if (!name) {
       throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
     }
+
+    function formatName(name) {
+      return name
+          .toLowerCase() // Convert everything to lowercase
+          .split(' ') // Split by space
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
+          .join(' '); // Join words back together
+  }
+  
+  // Example usage:
+      name = formatName(name);
+  
 
     const doc = new PDFDocument({
       size: 'A4',
