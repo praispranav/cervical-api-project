@@ -4,6 +4,7 @@ import { Response } from 'express';
 import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as moment from "moment"
 
 @Controller()
 export class AppController {
@@ -36,11 +37,15 @@ export class AppController {
     try {
       doc.image(path.join(__dirname, '..', 'certificate.jpeg'), 0, 0, { width: 842, height: 595 });
 
-      const fontBuffer = fs.readFileSync(path.join(__dirname, '..', 'Montserrat-Regular.ttf'));
-      doc.font(fontBuffer).fontSize(24).fillColor('black').text(name, 80, 280, { align: 'center' });
+      const fontBuffer = fs.readFileSync(path.join(__dirname, '..', 'GreatVibes-Regular.ttf'));
+      doc.font(fontBuffer).fontSize(24).fillColor('black').text(name, 80, 275, { align: 'center' });
+      
+      const fontBuffer2 = fs.readFileSync(path.join(__dirname, '..', 'Montserrat-Regular.ttf'));
+      const a = moment(new Date()).format('DD-MM-YYYY')
+      doc.font(fontBuffer2).fontSize(15).fillColor('black').text(a, 80, 468, { align: 'center' });
 
       if (additionalText) {
-        doc.fontSize(18).fillColor('red').text(additionalText, 80, 320, { align: 'center' });
+        doc.fontSize(18).fillColor('red').text(additionalText, 80, 295, { align: 'center' });
       }
 
       doc.end();
