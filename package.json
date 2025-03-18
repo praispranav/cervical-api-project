@@ -26,6 +26,7 @@
     "@types/pdfkit": "^0.13.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "http-proxy-middleware": "^3.0.3",
     "moment": "^2.30.1",
     "pdfkit": "^0.16.0",
     "reflect-metadata": "^0.2.2",
