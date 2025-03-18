@@ -17,7 +17,7 @@ export class AppController {
 
   @Get('generate-certificate')
   @Header('Content-Type', 'application/pdf')
-  @Header('Content-Disposition', 'inline; filename=certificate.pdf')
+  // @Header('Content-Disposition', 'inline; filename=certificate.pdf')
   async generateCertificate(
     @Res() res: Response,
     @Query('name') name: string = '',
