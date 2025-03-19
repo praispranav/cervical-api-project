@@ -4,6 +4,7 @@ import { Response } from 'express';
 import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import * as path from 'path';
+import {v4 } from "uuid"
 import * as moment from "moment"
 
 @Controller()
@@ -21,11 +22,16 @@ export class AppController {
   async generateCertificate(
     @Res() res: Response,
     @Query('name') name: string = '',
+    @Query('email') email: string = '',
+    @Query('phone') phone: string = '',
     @Query('additionalText') additionalText: string = '',
   ) {
     if (!name) {
       throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
     }
+    try{
+      fs.writeFileSync('./certificates/' + v4() + '.json', JSON.stringify({ name, email, phone }));
+    } catch(error){}
 
     function formatName(name) {
       return name
