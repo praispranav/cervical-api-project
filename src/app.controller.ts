@@ -24,13 +24,14 @@ export class AppController {
     @Query('name') name: string = '',
     @Query('email') email: string = '',
     @Query('phone') phone: string = '',
+    @Query('city') city: string = '',
     @Query('additionalText') additionalText: string = '',
   ) {
     if (!name) {
       throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
     }
     try{
-      fs.writeFileSync('./certificates/' + v4() + '.json', JSON.stringify({ name, email, phone }));
+      fs.writeFileSync('./certificates/' + v4() + '.json', JSON.stringify({ name, email, phone, city }));
     } catch(error){}
 
     function formatName(name) {
