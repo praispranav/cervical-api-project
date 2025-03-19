@@ -36,7 +36,7 @@ export class AppController {
       throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
     }
     try {
-      this.appService.createCertificate({ deviceType: DeviceType.Desktop, name, email, phone, city });
+      this.appService.createCertificate({ deviceType: DeviceType.Desktop, name, email, phone, city, timestamp: new Date() });
     } catch (error) {}
 
     function formatName(name) {
@@ -112,7 +112,7 @@ export class AppController {
     }
 
     try {
-      this.appService.createCertificate({ deviceType: DeviceType.Mobile, name, email, phone, city });
+      this.appService.createCertificate({ deviceType: DeviceType.Mobile, name, email, phone, city, timestamp: new Date() });
     } catch (error) {}
 
     try {
