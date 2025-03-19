@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Certificate, CertificateSchema } from './certificate.schema';
 require('dotenv').config();
 
+console.log(process.env.DB);
+
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.DB || ''),
+    MongooseModule.forRoot('mongodb+srv://onedayibecomecoder:yG09b8enzSOcxjux@cluster0.1zkx5.mongodb.net/', { dbName: 'cervical' }),
     MongooseModule.forFeature([{ name: Certificate.name, schema: CertificateSchema }]),
   ],
   controllers: [AppController],

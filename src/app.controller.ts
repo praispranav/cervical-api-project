@@ -4,6 +4,7 @@ import {
   Header,
   HttpException,
   HttpStatus,
+  Post,
   Query,
   Res,
 } from '@nestjs/common';
@@ -97,5 +98,87 @@ export class AppController {
     }
   }
 
-  
+  @Post('generate-certificate-mobile')
+  async generateCertificateMobile(
+    @Query('name') name: string,
+    @Query('additionalText') additionalText: string,
+    @Query('email') email: string,
+    @Query('city') city: string,
+    @Query('phone') phone: string,
+    @Res() res: Response,
+  ) {
+    if (!name) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Name is required' });
+    }
+
+    try {
+      this.appService.createCertificate({ deviceType: DeviceType.Mobile, name, email, phone, city });
+    } catch (error) {}
+
+    try {
+      fs.writeFileSync(
+        path.join(process.cwd(), 'certificates', `${v4()}.json`),
+        JSON.stringify({ name, email, phone, city }),
+      );
+    } catch (error) {
+      console.error('Error writing JSON:', error);
+    }
+
+    const doc = new PDFDocument({ size: 'A4', layout: 'landscape' });
+    const outputFilePath = path.join(process.cwd(), `certificate_${name}.pdf`);
+    const stream = fs.createWriteStream(outputFilePath);
+
+    doc.pipe(stream);
+    doc.image(path.join(process.cwd(), 'certificate.jpeg'), 0, 0, {
+      width: 842,
+      height: 595,
+    });
+
+    function formatName(inputName: string): string {
+      return inputName
+        .toLowerCase()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }
+
+    const formattedName = formatName(name);
+
+    const fontBuffer = fs.readFileSync(
+      path.join(process.cwd(), 'Boldonse-Regular.ttf'),
+    );
+    doc
+      .font(fontBuffer)
+      .fontSize(25)
+      .fillColor('black')
+      .text(formattedName, 80, 264, { align: 'center' });
+
+    const fontBuffer2 = fs.readFileSync(
+      path.join(process.cwd(), 'Montserrat-Regular.ttf'),
+    );
+    const formattedDate = moment(new Date()).format('DD-MM-YYYY');
+    doc
+      .font(fontBuffer2)
+      .fontSize(15)
+      .fillColor('black')
+      .text(formattedDate, 80, 468, { align: 'center' });
+
+    if (additionalText) {
+      doc
+        .fontSize(18)
+        .fillColor('red')
+        .text(additionalText, 80, 295, { align: 'center' });
+    }
+    doc.end();
+
+    stream.on('finish', () => {
+      res.download(outputFilePath, `certificate_${name}.pdf`, (err) => {
+        if (err) {
+          console.error('Download error:', err);
+          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error downloading file');
+        }
+        fs.unlinkSync(outputFilePath);
+      });
+    });
+  }
 }
