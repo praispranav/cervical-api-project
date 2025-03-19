@@ -10,7 +10,7 @@ console.log(process.env.DB);
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://onedayibecomecoder:yG09b8enzSOcxjux@cluster0.1zkx5.mongodb.net/', { dbName: 'cervical' }),
+    MongooseModule.forRoot('mongodb+srv://praispranav12:Venus7874@cluster0.1zkx5.mongodb.net/', { dbName: 'cervical' }),
     MongooseModule.forFeature([{ name: Certificate.name, schema: CertificateSchema }]),
   ],
   controllers: [AppController],
