@@ -2,9 +2,15 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Certificate, CertificateSchema } from './certificate.schema';
+require('dotenv').config();
 
 @Module({
-  imports: [],
+  imports: [
+    MongooseModule.forRoot(process.env.DB || ''),
+    MongooseModule.forFeature([{ name: Certificate.name, schema: CertificateSchema }]),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
