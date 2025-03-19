@@ -24,6 +24,9 @@ export class Certificate {
 
   @Prop({ type: String, enum: Object.values(DeviceType) })
   deviceType: string;
+
+  @Prop({ type: Date, default: new Date() })
+  timestamp: Date;
 }
 
 export const CertificateSchema = SchemaFactory.createForClass(Certificate);
