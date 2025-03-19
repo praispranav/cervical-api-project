@@ -57,7 +57,7 @@ export class AppController {
       doc.image(path.join(__dirname, '..', 'certificate.jpeg'), 0, 0, { width: 842, height: 595 });
 
       const fontBuffer = fs.readFileSync(path.join(__dirname, '..', 'Boldonse-Regular.ttf'));
-      doc.font(fontBuffer).fontSize(25).fillColor('black').text(name, 80, 260, { align: 'center' });
+      doc.font(fontBuffer).fontSize(25).fillColor('black').text(name, 80, 265, { align: 'center' });
       
       const fontBuffer2 = fs.readFileSync(path.join(__dirname, '..', 'Montserrat-Regular.ttf'));
       const a = moment(new Date()).format('DD-MM-YYYY')
