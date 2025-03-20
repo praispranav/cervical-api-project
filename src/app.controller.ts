@@ -72,14 +72,14 @@ export class AppController {
         .text(name, 80, 265, { align: 'center' });
 
       const fontBuffer2 = fs.readFileSync(
-        path.join(__dirname, '..', 'Montserrat-Regular.ttf'),
+        path.join(__dirname, '..', 'Montserrat-SemiBold.ttf'),
       );
-      const a = moment(new Date()).format('DD-MM-YYYY');
+      const a = moment(new Date()).format('MMMM Do, YYYY');
       doc
         .font(fontBuffer2)
         .fontSize(15)
         .fillColor('black')
-        .text(a, 80, 468, { align: 'center' });
+        .text(city + ', ' + a, 80, 468, { align: 'center' });
 
       if (additionalText) {
         doc
@@ -145,7 +145,7 @@ export class AppController {
     const formattedName = formatName(name);
 
     const fontBuffer = fs.readFileSync(
-      path.join(process.cwd(), 'Boldonse-Regular.ttf'),
+      path.join(__dirname, '..', 'Boldonse-Regular.ttf'),
     );
     doc
       .font(fontBuffer)
@@ -153,15 +153,15 @@ export class AppController {
       .fillColor('black')
       .text(formattedName, 80, 264, { align: 'center' });
 
-    const fontBuffer2 = fs.readFileSync(
-      path.join(process.cwd(), 'Montserrat-Regular.ttf'),
-    );
-    const formattedDate = moment(new Date()).format('DD-MM-YYYY');
-    doc
-      .font(fontBuffer2)
-      .fontSize(15)
-      .fillColor('black')
-      .text(formattedDate, 80, 468, { align: 'center' });
+      const fontBuffer2 = fs.readFileSync(
+        path.join(__dirname, '..', 'Montserrat-SemiBold.ttf'),
+      );
+      const a = moment(new Date()).format('MMMM Do, YYYY');
+      doc
+        .font(fontBuffer2)
+        .fontSize(15)
+        .fillColor('black')
+        .text(city + ', ' + a, 80, 468, { align: 'center' });
 
     if (additionalText) {
       doc
