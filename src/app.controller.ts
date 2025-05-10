@@ -19,7 +19,7 @@ import { DeviceType } from './certificate.schema';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService,) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get('generate-certificate')
   @Header('Content-Type', 'application/pdf')
@@ -36,7 +36,15 @@ export class AppController {
       throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
     }
     try {
-      this.appService.createCertificate({ deviceType: DeviceType.Desktop, name, email, phone, city, timestamp: new Date() });
+      this.appService.createCertificate({
+        certificateType: 'cervical',
+        deviceType: DeviceType.Desktop,
+        name,
+        email,
+        phone,
+        city,
+        timestamp: new Date(),
+      });
     } catch (error) {}
 
     function formatName(name) {
@@ -108,11 +116,21 @@ export class AppController {
     @Res() res: Response,
   ) {
     if (!name) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Name is required' });
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ error: 'Name is required' });
     }
 
     try {
-      this.appService.createCertificate({ deviceType: DeviceType.Mobile, name, email, phone, city, timestamp: new Date() });
+      this.appService.createCertificate({
+        certificateType: 'cervical',
+        deviceType: DeviceType.Mobile,
+        name,
+        email,
+        phone,
+        city,
+        timestamp: new Date(),
+      });
     } catch (error) {}
 
     try {
@@ -153,15 +171,15 @@ export class AppController {
       .fillColor('black')
       .text(formattedName, 80, 264, { align: 'center' });
 
-      const fontBuffer2 = fs.readFileSync(
-        path.join(__dirname, '..', 'Montserrat-SemiBold.ttf'),
-      );
-      const a = moment(new Date()).format('MMMM Do, YYYY');
-      doc
-        .font(fontBuffer2)
-        .fontSize(15)
-        .fillColor('black')
-        .text(city + ', ' + a, 80, 468, { align: 'center' });
+    const fontBuffer2 = fs.readFileSync(
+      path.join(__dirname, '..', 'Montserrat-SemiBold.ttf'),
+    );
+    const a = moment(new Date()).format('MMMM Do, YYYY');
+    doc
+      .font(fontBuffer2)
+      .fontSize(15)
+      .fillColor('black')
+      .text(city + ', ' + a, 80, 468, { align: 'center' });
 
     if (additionalText) {
       doc
@@ -175,7 +193,9 @@ export class AppController {
       res.download(outputFilePath, `certificate_${name}.pdf`, (err) => {
         if (err) {
           console.error('Download error:', err);
-          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error downloading file');
+          return res
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .send('Error downloading file');
         }
         fs.unlinkSync(outputFilePath);
       });
@@ -197,7 +217,15 @@ export class AppController {
       throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
     }
     try {
-      this.appService.createCertificate({ deviceType: DeviceType.Desktop, name, email, phone, city, timestamp: new Date() });
+      this.appService.createCertificate({
+        certificateType: 'mothersDay',
+        deviceType: DeviceType.Desktop,
+        name,
+        email,
+        phone,
+        city,
+        timestamp: new Date(),
+      });
     } catch (error) {}
 
     function formatName(name) {
@@ -218,10 +246,15 @@ export class AppController {
     doc.pipe(res);
 
     try {
-      doc.image(path.join(__dirname, '..', 'mother_day_certificate.jpg'), 0, 0, {
-        width: 842,
-        height: 595,
-      });
+      doc.image(
+        path.join(__dirname, '..', 'mother_day_certificate.jpg'),
+        0,
+        0,
+        {
+          width: 842,
+          height: 595,
+        },
+      );
 
       const fontBuffer = fs.readFileSync(
         path.join(__dirname, '..', 'Boldonse-Regular.ttf'),
@@ -269,11 +302,21 @@ export class AppController {
     @Res() res: Response,
   ) {
     if (!name) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Name is required' });
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ error: 'Name is required' });
     }
 
     try {
-      this.appService.createCertificate({ deviceType: DeviceType.Mobile, name, email, phone, city, timestamp: new Date() });
+      this.appService.createCertificate({
+        deviceType: DeviceType.Mobile,
+        name,
+        email,
+        certificateType: 'mothersDay',
+        phone,
+        city,
+        timestamp: new Date(),
+      });
     } catch (error) {}
 
     try {
@@ -314,15 +357,15 @@ export class AppController {
       .fillColor('black')
       .text(formattedName, 80, 335, { align: 'center' });
 
-      const fontBuffer2 = fs.readFileSync(
-        path.join(__dirname, '..', 'Montserrat-SemiBold.ttf'),
-      );
-      const a = moment(new Date()).format('MMMM Do, YYYY');
-      doc
-        .font(fontBuffer2)
-        .fontSize(15)
-        .fillColor('black')
-        .text(city + ', ' + a, 80, 458, { align: 'center' });
+    const fontBuffer2 = fs.readFileSync(
+      path.join(__dirname, '..', 'Montserrat-SemiBold.ttf'),
+    );
+    const a = moment(new Date()).format('MMMM Do, YYYY');
+    doc
+      .font(fontBuffer2)
+      .fontSize(15)
+      .fillColor('black')
+      .text(city + ', ' + a, 80, 458, { align: 'center' });
 
     if (additionalText) {
       doc
@@ -336,7 +379,9 @@ export class AppController {
       res.download(outputFilePath, `certificate_${name}.pdf`, (err) => {
         if (err) {
           console.error('Download error:', err);
-          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error downloading file');
+          return res
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .send('Error downloading file');
         }
         fs.unlinkSync(outputFilePath);
       });

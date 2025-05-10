@@ -25,6 +25,9 @@ export class Certificate {
   @Prop({ type: String, enum: Object.values(DeviceType) })
   deviceType: string;
 
+  @Prop({ type: String, required: false })
+  certificateType: string;
+
   @Prop({ type: Date, default: new Date() })
   timestamp: Date;
 }
