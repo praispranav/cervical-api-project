@@ -498,7 +498,7 @@ export class AppController {
         deviceType: DeviceType.Mobile,
         name,
         email,
-        certificateType: 'mothersDay',
+        certificateType: 'elderAbuse',
         phone,
         city,
         timestamp: new Date(),
