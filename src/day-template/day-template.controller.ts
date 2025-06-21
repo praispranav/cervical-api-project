@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { DayTemplateService } from './day-template.service';
-
+import { Response } from 'express';
 @Controller('day-template')
 export class DayTemplateController {
   constructor(private dayTemplateService: DayTemplateService) {}
@@ -34,6 +35,23 @@ export class DayTemplateController {
     }),
   )
   uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return { filename: file.filename };
+  }
+
+  @Post('upload/template')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './templates',
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now();
+          const ext = extname(file.originalname);
+          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+        },
+      }),
+    }),
+  )
+  uploadFileTemplate(@UploadedFile() file: Express.Multer.File) {
     return { filename: file.filename };
   }
 
@@ -75,5 +93,25 @@ export class DayTemplateController {
   @Get('get-template')
   async getTemplate() {
     return await this.dayTemplateService.getTemplates();
+  }
+
+  //    get Get Certificate According to radio button selected
+  @Get('get-certificate')
+  async getCertificate(
+    @Res() res: Response,
+    @Query('name') name: string = '',
+    @Query('email') email: string = '',
+    @Query('phone') phone: string = '',
+    @Query('city') city: string = '',
+    @Query('templateId') templateId: string = '',
+  ) {
+    return await this.dayTemplateService.generateCertificate({
+      res,
+      name,
+      email,
+      phone,
+      city,
+      templateId,
+    });
   }
 }

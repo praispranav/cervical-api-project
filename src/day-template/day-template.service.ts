@@ -3,6 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Slider, SliderDocument } from './slider.schema';
 import { Model } from 'mongoose';
 import { DayTemplate, DayTemplateDocument } from './day-template.schema';
+import * as moment from 'moment';
+
+import * as fs from 'fs';
+import * as path from 'path';
+import * as PDFDocument from 'pdfkit';
+import { v4 } from 'uuid';
+import { DeviceType } from '../certificate.schema';
+import { AppService } from 'src/app.service';
 
 @Injectable()
 export class DayTemplateService {
@@ -11,6 +19,7 @@ export class DayTemplateService {
     private readonly sliderModel: Model<SliderDocument>,
     @InjectModel(DayTemplate.name)
     private readonly dayTemplate: Model<DayTemplateDocument>,
+    private appService: AppService,
   ) {}
 
   async getSlides() {
@@ -73,5 +82,81 @@ export class DayTemplateService {
 
   async getTemplates() {
     return this.dayTemplate.find();
+  }
+
+  async generateCertificate({ templateId, city, phone, name, email, res }) {
+    const template = await this.dayTemplate.findById(templateId);
+    if (!template)
+      throw new HttpException('Template not found', HttpStatus.BAD_REQUEST);
+
+    if (!name) {
+      throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      this.appService.createCertificate({
+        certificateType: template.name,
+        deviceType: DeviceType.Desktop,
+        name,
+        email,
+        phone,
+        city,
+        timestamp: new Date(),
+      });
+    } catch (error) {}
+
+    function formatName(name) {
+      return name
+        .toLowerCase() // Convert everything to lowercase
+        .split(' ') // Split by space
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
+        .join(' '); // Join words back together
+    }
+
+    name = formatName(name);
+
+    const doc = new PDFDocument({
+      size: 'A4',
+      layout: 'landscape',
+    });
+
+    doc.pipe(res);
+
+    try {
+      doc.image('./templates/' + template.file, 0, 0, {
+        width: 842,
+        height: 595,
+      });
+
+      const fontBuffer = fs.readFileSync('./Boldonse-Regular.ttf');
+      doc
+        .font(fontBuffer)
+        .fontSize(25)
+        .fillColor('black')
+        .text(name, template.nameCoordinate.x, template.nameCoordinate.y, {
+          align: 'center',
+        });
+
+      const fontBuffer2 = fs.readFileSync('./Montserrat-SemiBold.ttf');
+      const a = moment(new Date()).format('MMMM Do, YYYY');
+      doc
+        .font(fontBuffer2)
+        .fontSize(15)
+        .fillColor('black')
+        .text(
+          city + ', ' + a,
+          template.dateTimeCoordinate.x,
+          template.dateTimeCoordinate.y,
+          { align: 'center' },
+        );
+
+      doc.end();
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw new HttpException(
+        'Failed to generate PDF',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
