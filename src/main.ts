@@ -13,7 +13,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-  app.use(new ApiKeyMiddleware().use);
+  // app.use(new ApiKeyMiddleware().use);
   await app.listen(process.env.PORT ?? 8909);
 }
 bootstrap();
