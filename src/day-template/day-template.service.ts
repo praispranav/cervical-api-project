@@ -11,6 +11,7 @@ import * as PDFDocument from 'pdfkit';
 import { v4 } from 'uuid';
 import { DeviceType } from '../certificate.schema';
 import { AppService } from 'src/app.service';
+import { FormControl, FormControlDocument } from './form-control.schema';
 
 @Injectable()
 export class DayTemplateService {
@@ -20,6 +21,8 @@ export class DayTemplateService {
     @InjectModel(DayTemplate.name)
     private readonly dayTemplate: Model<DayTemplateDocument>,
     private appService: AppService,
+    @InjectModel(FormControl.name)
+    private readonly fromControlMode: Model<FormControlDocument>,
   ) {}
 
   async getSlides() {
@@ -246,5 +249,32 @@ export class DayTemplateService {
         fs.unlinkSync(outputFilePath);
       });
     });
+  }
+
+  async createFormControl(body) {
+    try {
+      await this.fromControlMode.create(body);
+      return { message: 'Created Successfully', success: true };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateFormControl(body) {
+    try {
+      const payload = { ...body };
+      delete payload._id;
+      await this.fromControlMode.updateOne(
+        { _id: body._id },
+        { $set: payload },
+      );
+      return { success: true, message: 'Updated Successfully' };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getFormControl() {
+    return await this.fromControlMode.findOne({});
   }
 }

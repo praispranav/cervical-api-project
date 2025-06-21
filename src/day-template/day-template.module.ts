@@ -7,6 +7,7 @@ import { CloudinaryService } from './cloudinary.service';
 import { DayTemplate, DayTemplateSchema } from './day-template.schema';
 import { AppService } from 'src/app.service';
 import { Certificate, CertificateSchema } from 'src/certificate.schema';
+import { FormControl, FormControlSchema } from './form-control.schema';
 
 @Module({
   imports: [
@@ -22,6 +23,10 @@ import { Certificate, CertificateSchema } from 'src/certificate.schema';
       {
         name: Certificate.name,
         schema: CertificateSchema,
+      },
+      {
+        name: FormControl.name,
+        schema: FormControlSchema,
       },
     ]),
   ],

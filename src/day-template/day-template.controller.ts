@@ -136,4 +136,19 @@ export class DayTemplateController {
       templateId,
     });
   }
+
+  @Post('create-form-control')
+  async createFormControl(@Body() body: any) {
+    return await this.dayTemplateService.createFormControl(body);
+  }
+
+  @Get('get-form-control')
+  async getFormControl() {
+    return await this.dayTemplateService.getFormControl();
+  }
+
+  @Patch('update-from-control')
+  async updateFormControl(@Body() body: any) {
+    return await this.dayTemplateService.updateFormControl(body);
+  }
 }
