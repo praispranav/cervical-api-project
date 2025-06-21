@@ -159,4 +159,92 @@ export class DayTemplateService {
       );
     }
   }
+
+  async generateCertificateMobile({
+    templateId,
+    city,
+    phone,
+    name,
+    email,
+    res,
+  }) {
+    const template = await this.dayTemplate.findById(templateId);
+    if (!template)
+      throw new HttpException('Template not found', HttpStatus.BAD_REQUEST);
+
+    if (!name) {
+      throw new HttpException('Name is required', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      this.appService.createCertificate({
+        certificateType: template.name,
+        deviceType: DeviceType.Mobile,
+        name,
+        email,
+        phone,
+        city,
+        timestamp: new Date(),
+      });
+    } catch (error) {}
+
+    const doc = new PDFDocument({ size: 'A4', layout: 'landscape' });
+    const outputFilePath = path.join(process.cwd(), `certificate_${name}.pdf`);
+    const stream = fs.createWriteStream(outputFilePath);
+
+    doc.pipe(stream);
+    doc.image('./templates/' + template.file, 0, 0, {
+      width: 842,
+      height: 595,
+    });
+
+    function formatName(inputName: string): string {
+      return inputName
+        .toLowerCase()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }
+
+    const formattedName = formatName(name);
+
+    const fontBuffer = fs.readFileSync('./Boldonse-Regular.ttf');
+    doc
+      .font(fontBuffer)
+      .fontSize(25)
+      .fillColor('black')
+      .text(
+        formattedName,
+        template.nameCoordinate.x,
+        template.nameCoordinate.y,
+        { align: 'center' },
+      );
+
+    const fontBuffer2 = fs.readFileSync('./Montserrat-SemiBold.ttf');
+    const a = moment(new Date()).format('MMMM Do, YYYY');
+    doc
+      .font(fontBuffer2)
+      .fontSize(15)
+      .fillColor('black')
+      .text(
+        city + ', ' + a,
+        template.dateTimeCoordinate.x,
+        template.dateTimeCoordinate.y,
+        { align: 'center' },
+      );
+
+    doc.end();
+
+    stream.on('finish', () => {
+      res.download(outputFilePath, `certificate_${name}.pdf`, (err) => {
+        if (err) {
+          console.error('Download error:', err);
+          return res
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .send('Error downloading file');
+        }
+        fs.unlinkSync(outputFilePath);
+      });
+    });
+  }
 }

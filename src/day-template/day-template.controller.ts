@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Patch,
   Post,
   Query,
@@ -97,6 +98,8 @@ export class DayTemplateController {
 
   //    get Get Certificate According to radio button selected
   @Get('get-certificate')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename=certificate.pdf')
   async getCertificate(
     @Res() res: Response,
     @Query('name') name: string = '',
@@ -106,6 +109,25 @@ export class DayTemplateController {
     @Query('templateId') templateId: string = '',
   ) {
     return await this.dayTemplateService.generateCertificate({
+      res,
+      name,
+      email,
+      phone,
+      city,
+      templateId,
+    });
+  }
+
+  @Get('get-certificate-mobile')
+  async getCertificateMobile(
+    @Res() res: Response,
+    @Query('name') name: string = '',
+    @Query('email') email: string = '',
+    @Query('phone') phone: string = '',
+    @Query('city') city: string = '',
+    @Query('templateId') templateId: string = '',
+  ) {
+    return await this.dayTemplateService.generateCertificateMobile({
       res,
       name,
       email,
