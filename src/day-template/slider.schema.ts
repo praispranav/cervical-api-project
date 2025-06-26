@@ -29,6 +29,9 @@ export class Slider {
   @Prop({ type: String })
   buttonLink: string;
 
+  @Prop({ type: String, enum: ['right', 'left'] })
+  align: string;
+
   @Prop({ type: Date, default: new Date() })
   timestamp: Date;
 }
