@@ -22,6 +22,10 @@ console.log(process.env.DB);
       rootPath: './upload',
       serveRoot: '/static', // access files via /static/<filename>
     }),
+    ServeStaticModule.forRoot({
+      rootPath: './templates',
+      serveRoot: '/templates', // access files via /static/<filename>
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
