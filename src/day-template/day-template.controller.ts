@@ -163,4 +163,27 @@ export class DayTemplateController {
   async updateFormControl(@Body() body: any) {
     return await this.dayTemplateService.updateFormControl(body);
   }
+
+  @UseGuards(AppKeyGuard)
+  @Post('create-event')
+  createEvent(@Body() body) {
+    return this.dayTemplateService.createEvents(body);
+  }
+
+  @UseGuards(AppKeyGuard)
+  @Patch('update-event')
+  updateEvent(@Body() body) {
+    return this.dayTemplateService.editEvent(body);
+  }
+
+  @UseGuards(AppKeyGuard)
+  @Delete('delete-event')
+  deleteEvent(@Query('id') id) {
+    return this.dayTemplateService.deleteEvent(id);
+  }
+
+  @Get('get-events')
+  getEvents() {
+    return this.dayTemplateService.getEvents();
+  }
 }

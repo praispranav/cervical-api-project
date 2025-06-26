@@ -12,6 +12,7 @@ import { v4 } from 'uuid';
 import { DeviceType } from '../certificate.schema';
 import { AppService } from 'src/app.service';
 import { FormControl, FormControlDocument } from './form-control.schema';
+import { Events, EventsDocument } from './events.schema';
 
 @Injectable()
 export class DayTemplateService {
@@ -23,6 +24,9 @@ export class DayTemplateService {
     private appService: AppService,
     @InjectModel(FormControl.name)
     private readonly fromControlMode: Model<FormControlDocument>,
+
+    @InjectModel(Events.name)
+    private readonly eventModel: Model<EventsDocument>,
   ) {}
 
   async getSlides() {
@@ -276,5 +280,21 @@ export class DayTemplateService {
 
   async getFormControl() {
     return await this.fromControlMode.findOne({});
+  }
+
+  getEvents() {
+    return this.eventModel.find();
+  }
+
+  createEvents(payload) {
+    return this.eventModel.create(payload);
+  }
+  deleteEvent(id) {
+    return this.eventModel.deleteOne(id);
+  }
+  editEvent(payload) {
+    const data = { ...payload };
+    delete data._id;
+    return this.eventModel.updateOne({ _id: payload._id }, { $set: data });
   }
 }

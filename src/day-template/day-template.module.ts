@@ -8,6 +8,7 @@ import { DayTemplate, DayTemplateSchema } from './day-template.schema';
 import { AppService } from 'src/app.service';
 import { Certificate, CertificateSchema } from 'src/certificate.schema';
 import { FormControl, FormControlSchema } from './form-control.schema';
+import { Events, EventsSchema } from './events.schema';
 
 @Module({
   imports: [
@@ -27,6 +28,10 @@ import { FormControl, FormControlSchema } from './form-control.schema';
       {
         name: FormControl.name,
         schema: FormControlSchema,
+      },
+      {
+        name: Events.name,
+        schema: EventsSchema,
       },
     ]),
   ],
